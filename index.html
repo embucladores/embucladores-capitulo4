@@ -45,7 +45,8 @@
 
         body {
             background-color: var(--bg-dark-blue);
-            background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920');
+            /* Modificado: Fondo por defecto Nuevo Santuario */
+            background-image: url('NuevoSantuario.jpg');
             background-size: cover; 
             background-position: center;
             color: var(--text-light); height: 100vh; overflow: hidden;
@@ -900,7 +901,7 @@
                     { id: "mus3", titulo: "Capítulo 3", subtitulo: "Dale a reproducir, y salva el universo.", rutas: ["capitulo3.mp3", "capitulo3V2.mp3"], img: "helios.webp" },
                     { id: "mus4", titulo: "Capítulo 4", subtitulo: "Dale a reproducir, y enfréntate al legado.", rutas: ["capitulo4.mp3"], img: "hestia.webp" },
                     { id: "mus5", titulo: "Tema de Aventura", subtitulo: "Dale a reproducir, y explora la nueva Realidad Cero.", rutas: ["aventura.mp3"], img: "puntocero.webp" },
-{ id: "mus6", titulo: "Tema de la Fundación", subtitulo: "Dale a reproducir, y sientete como una roca.", rutas: ["fundacionmusica.mp3"], img: "fundacionimg.jpg" },
+                    { id: "mus6", titulo: "Tema de la Fundación", subtitulo: "Dale a reproducir, y sientete como una roca.", rutas: ["fundacionmusica.mp3"], img: "fundacionimg.jpg" },
                     { id: "mus7", titulo: "Tema de la Orden del Juramento", subtitulo: "Dale a reproducir, y forma parte de una inesperada dictadura.", rutas: ["orden.mp3", "juramentoV2.mp3"], img: "ciudadela.webp" }
                 ],
                 fondos: [
@@ -1426,16 +1427,38 @@
             if (timeDisp) timeDisp.innerText = `${formatTime(audioEl.currentTime)} / ${formatTime(duration)}`;
         });
 
+        /* Modificado: Lógica de carga para inyectar fondo y música de Capítulo 4 por defecto la primera vez */
         function loadSavedSettings() {
-            const savedBg = localStorage.getItem('sieteso7_wallpaper');
-            if (savedBg) document.body.style.backgroundImage = `url('${savedBg}')`;
-            const savedMusic = localStorage.getItem('sieteso7_music');
-            const savedMusicId = localStorage.getItem('sieteso7_music_id');
-            if (savedMusic && savedMusicId) {
-                audioEl.src = savedMusic;
-                currentActiveTrackId = savedMusicId;
-                let parts = savedMusicId.split('_');
-                if(parts.length === 2) { selectedVariants[parts[0]] = parseInt(parts[1]); }
+            const isFirstVisit = localStorage.getItem('sieteso7_first_visit') === null;
+
+            if (isFirstVisit) {
+                // Establecemos los valores por defecto
+                const defaultBg = 'NuevoSantuario.jpg';
+                document.body.style.backgroundImage = `url('${defaultBg}')`;
+                localStorage.setItem('sieteso7_wallpaper', defaultBg);
+
+                const defaultMusic = 'capitulo4.mp3';
+                const defaultMusicId = 'mus4_0'; 
+                audioEl.src = defaultMusic;
+                currentActiveTrackId = defaultMusicId;
+                localStorage.setItem('sieteso7_music', defaultMusic);
+                localStorage.setItem('sieteso7_music_id', defaultMusicId);
+
+                // Marcamos que ya se ha entrado por primera vez
+                localStorage.setItem('sieteso7_first_visit', 'false');
+            } else {
+                // Si no es la primera vez, cargamos lo que haya en memoria
+                const savedBg = localStorage.getItem('sieteso7_wallpaper');
+                if (savedBg) document.body.style.backgroundImage = `url('${savedBg}')`;
+                
+                const savedMusic = localStorage.getItem('sieteso7_music');
+                const savedMusicId = localStorage.getItem('sieteso7_music_id');
+                if (savedMusic && savedMusicId) {
+                    audioEl.src = savedMusic;
+                    currentActiveTrackId = savedMusicId;
+                    let parts = savedMusicId.split('_');
+                    if(parts.length === 2) { selectedVariants[parts[0]] = parseInt(parts[1]); }
+                }
             }
         }
 
